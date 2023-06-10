@@ -5,7 +5,10 @@
 #
 # Source: https://github.com/UIC-Paper/MIMN
 
+# for python 2
 import cPickle as pkl
+# for python 3
+import pickle as pkl
 import pandas as pd
 import random
 import numpy as np
@@ -14,9 +17,9 @@ RAW_DATA_FILE = './data/taobao_data/UserBehavior.csv'
 DATASET_PKL = './data/taobao_data/dataset.pkl'
 Test_File = "./data/taobao_data/taobao_test.txt"
 Train_File = "./data/taobao_data/taobao_train.txt"
-Train_handle = open(Train_File, 'w')
-Test_handle = open(Test_File, 'w')
-Feature_handle = open("./data/taobao_data/taobao_feature.pkl",'w')
+Train_handle = open(Train_File, 'wb')
+Test_handle = open(Test_File, 'wb')
+Feature_handle = open("./data/taobao_data/taobao_feature.pkl",'wb')
 
 MAX_LEN_ITEM = 200
 
@@ -135,8 +138,8 @@ def gen_dataset(user_df, item_df, item_cnt, feature_size, dataset_pkl):
                 cat_list.append(item_part_pad[i][2])
             train_sample_list.append(str(uid) + "\t" + str(target_item) + "\t" + str(target_item_cate) + "\t" + str(label) + "\t" + ",".join(map(str, item_list)) + "\t" +",".join(map(str, cat_list))+"\n")
 
-    train_sample_length_quant = len(train_sample_list)/256*256
-    test_sample_length_quant = len(test_sample_list)/256*256
+    train_sample_length_quant = len(train_sample_list)//256*256 # You need to convert these quantities to integers
+    test_sample_length_quant = len(test_sample_list)//256*256
 
     print("length",len(train_sample_list))
     train_sample_list = train_sample_list[:train_sample_length_quant]
@@ -154,7 +157,7 @@ def produce_neg_item_hist_with_cate(train_file, test_file):
         units = line.strip().split("\t")
         item_hist_list = units[4].split(",")
         cate_hist_list = units[5].split(",")
-        hist_list = zip(item_hist_list, cate_hist_list)
+        hist_list = list(zip(item_hist_list, cate_hist_list))
         hist_seq = len(hist_list)
         sample_count += 1
         for item in hist_list:
@@ -164,7 +167,7 @@ def produce_neg_item_hist_with_cate(train_file, test_file):
         units = line.strip().split("\t")
         item_hist_list = units[4].split(",")
         cate_hist_list = units[5].split(",")
-        hist_list = zip(item_hist_list, cate_hist_list)
+        hist_list = list(zip(item_hist_list, cate_hist_list))
         hist_seq = len(hist_list)
         sample_count += 1
         for item in hist_list:
