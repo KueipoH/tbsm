@@ -172,7 +172,7 @@ def produce_neg_item_hist_with_cate(train_file, test_file):
 
 
     del(item_dict["('0', '0')"])
-    neg_array = np.random.choice(np.array(item_dict.keys()), (sample_count, hist_seq+20))
+    neg_array = np.random.choice(np.array(list(item_dict.keys())), (sample_count, hist_seq+20))
     neg_list = neg_array.tolist()
     sample_count = 0
 
