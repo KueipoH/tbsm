@@ -5,7 +5,8 @@
 #
 # Source: https://github.com/UIC-Paper/MIMN
 
-import cPickle as pkl
+import cPickle as pkl # Python 2.7
+import pickle as psk  # Python 3.
 import pandas as pd
 import random
 import numpy as np
@@ -16,7 +17,7 @@ Test_File = "./data/taobao_data/taobao_test.txt"
 Train_File = "./data/taobao_data/taobao_train.txt"
 Train_handle = open(Train_File, 'w')
 Test_handle = open(Test_File, 'w')
-Feature_handle = open("./data/taobao_data/taobao_feature.pkl",'w')
+Feature_handle = open("./data/taobao_data/taobao_feature.pkl",'wb')
 
 MAX_LEN_ITEM = 200
 
@@ -135,8 +136,8 @@ def gen_dataset(user_df, item_df, item_cnt, feature_size, dataset_pkl):
                 cat_list.append(item_part_pad[i][2])
             train_sample_list.append(str(uid) + "\t" + str(target_item) + "\t" + str(target_item_cate) + "\t" + str(label) + "\t" + ",".join(map(str, item_list)) + "\t" +",".join(map(str, cat_list))+"\n")
 
-    train_sample_length_quant = len(train_sample_list)/256*256
-    test_sample_length_quant = len(test_sample_list)/256*256
+    train_sample_length_quant = int(len(train_sample_list)/256*256)
+    test_sample_length_quant = int(len(test_sample_list)/256*256)
 
     print("length",len(train_sample_list))
     train_sample_list = train_sample_list[:train_sample_length_quant]
@@ -171,8 +172,10 @@ def produce_neg_item_hist_with_cate(train_file, test_file):
             item_dict.setdefault(str(item),0)
 
 
-    del(item_dict["('0', '0')"])
-    neg_array = np.random.choice(np.array(item_dict.keys()), (sample_count, hist_seq+20))
+    #del(item_dict["('0', '0')"])
+    item_dict.pop("('0', '0')",0)
+    item_dict.pop("('0', '0')",None)
+    neg_array = np.random.choice(np.array(list(item_dict.keys())), (sample_count, hist_seq+20))
     neg_list = neg_array.tolist()
     sample_count = 0
 
@@ -191,7 +194,8 @@ def produce_neg_item_hist_with_cate(train_file, test_file):
                 break
         sample_count += 1
         neg_item_list, neg_cate_list = zip(*neg_hist_list)
-        Train_handle.write(line.strip() + "\t" + ",".join(neg_item_list) + "\t" + ",".join(neg_cate_list) + "\n" )
+        with open(train_file, 'w') as Train_handle:
+            Train_handle.write(line.strip() + "\t" + ",".join(neg_item_list) + "\t" + ",".join(neg_cate_list) + "\n" )
 
     for line in test_file:
         units = line.strip().split("\t")
@@ -208,7 +212,8 @@ def produce_neg_item_hist_with_cate(train_file, test_file):
                 break
         sample_count += 1
         neg_item_list, neg_cate_list = zip(*neg_hist_list)
-        Test_handle.write(line.strip() + "\t" + ",".join(neg_item_list) + "\t" + ",".join(neg_cate_list) + "\n" )
+        with open(test_file, 'w') as Test_handle:
+            Test_handle.write(line.strip() + "\t" + ",".join(neg_item_list) + "\t" + ",".join(neg_cate_list) + "\n" )
 
 def main():
     df = to_df(RAW_DATA_FILE)
