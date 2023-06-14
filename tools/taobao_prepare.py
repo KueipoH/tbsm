@@ -135,8 +135,8 @@ def gen_dataset(user_df, item_df, item_cnt, feature_size, dataset_pkl):
                 cat_list.append(item_part_pad[i][2])
             train_sample_list.append(str(uid) + "\t" + str(target_item) + "\t" + str(target_item_cate) + "\t" + str(label) + "\t" + ",".join(map(str, item_list)) + "\t" +",".join(map(str, cat_list))+"\n")
 
-    train_sample_length_quant = len(train_sample_list)/256*256
-    test_sample_length_quant = len(test_sample_list)/256*256
+    train_sample_length_quant = int(len(train_sample_list)/256*256)
+    test_sample_length_quant = int(len(test_sample_list)/256*256)
 
     print("length",len(train_sample_list))
     train_sample_list = train_sample_list[:train_sample_length_quant]
