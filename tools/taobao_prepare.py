@@ -16,7 +16,7 @@ Test_File = "./data/taobao_data/taobao_test.txt"
 Train_File = "./data/taobao_data/taobao_train.txt"
 Train_handle = open(Train_File, 'w')
 Test_handle = open(Test_File, 'w')
-Feature_handle = open("./data/taobao_data/taobao_feature.pkl",'w')
+Feature_handle = open("./data/taobao_data/taobao_feature.pkl",'wb')
 
 MAX_LEN_ITEM = 200
 
